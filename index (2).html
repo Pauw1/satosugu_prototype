@@ -1,0 +1,1087 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SatoSugu Collab — Prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gojo-blue: #4a8fd4;
+    --gojo-blue-light: #7eb5e8;
+    --gojo-blue-deep: #2d5a8a;
+    --gojo-bg: #eaf2fb;
+    --geto-purple: #6b4e8a;
+    --geto-purple-light: #9d7cc1;
+    --geto-purple-deep: #3d2956;
+    --geto-bg: #ede4f5;
+    --fusion: linear-gradient(135deg, #4a8fd4 0%, #6b4e8a 100%);
+    --paper: #faf7f2;
+    --ink: #1a1622;
+    --ink-soft: #4a4258;
+    --ink-faded: #8a8298;
+    --rule: rgba(26, 22, 34, 0.12);
+    --serif: 'Cormorant Garamond', Georgia, serif;
+    --sans: 'Inter', -apple-system, sans-serif;
+    --mono: 'JetBrains Mono', monospace;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--sans);
+    color: var(--ink);
+    background: var(--paper);
+    background-image:
+      radial-gradient(circle at 20% 10%, rgba(74, 143, 212, 0.08) 0%, transparent 40%),
+      radial-gradient(circle at 80% 80%, rgba(107, 78, 138, 0.08) 0%, transparent 40%);
+    background-attachment: fixed;
+    min-height: 100vh;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .grain {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.04;
+    mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+    z-index: 1000;
+  }
+
+  .container {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 60px 32px 80px;
+    position: relative;
+  }
+
+  /* MASTHEAD */
+  .masthead {
+    text-align: center;
+    margin-bottom: 80px;
+    padding-bottom: 40px;
+    border-bottom: 1px solid var(--rule);
+    position: relative;
+  }
+
+  .masthead::before {
+    content: '✦';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--paper);
+    padding: 0 16px;
+    color: var(--geto-purple);
+    font-size: 18px;
+  }
+
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--ink-faded);
+    margin-bottom: 16px;
+  }
+
+  .title {
+    font-family: var(--serif);
+    font-size: clamp(48px, 7vw, 88px);
+    font-weight: 500;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    margin-bottom: 12px;
+  }
+
+  .title .amp {
+    font-style: italic;
+    background: var(--fusion);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    font-weight: 400;
+  }
+
+  .title .six { color: var(--gojo-blue-deep); font-weight: 600; }
+  .title .eyes { color: var(--geto-purple-deep); font-weight: 600; }
+
+  .subtitle {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 22px;
+    color: var(--ink-soft);
+    font-weight: 400;
+  }
+
+  /* SECTION HEADERS */
+  .section-header {
+    margin: 80px 0 32px;
+    display: flex;
+    align-items: baseline;
+    gap: 20px;
+  }
+
+  .section-num {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--geto-purple);
+    letter-spacing: 0.1em;
+  }
+
+  .section-title {
+    font-family: var(--serif);
+    font-size: 36px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+
+  .section-rule {
+    flex: 1;
+    height: 1px;
+    background: var(--rule);
+  }
+
+  /* AO3 CHAPTER VIEW */
+  .ao3-frame {
+    background: white;
+    border: 1px solid var(--rule);
+    border-radius: 2px;
+    box-shadow: 0 1px 0 rgba(0,0,0,0.04), 0 24px 60px -20px rgba(45, 90, 138, 0.15);
+    overflow: hidden;
+    position: relative;
+  }
+
+  .ao3-tab {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 10px 20px;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .ao3-tab .dots {
+    display: flex;
+    gap: 6px;
+  }
+
+  .ao3-tab .dots span {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.25);
+  }
+
+  .ao3-content {
+    padding: 56px 64px;
+  }
+
+  .work-meta {
+    border-bottom: 1px solid var(--rule);
+    padding-bottom: 24px;
+    margin-bottom: 40px;
+  }
+
+  .work-fandom {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--gojo-blue-deep);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  .work-title {
+    font-family: var(--serif);
+    font-size: 42px;
+    font-weight: 500;
+    line-height: 1.1;
+    margin-bottom: 8px;
+    letter-spacing: -0.01em;
+  }
+
+  .work-subtitle {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 18px;
+    color: var(--ink-soft);
+    margin-bottom: 20px;
+  }
+
+  .work-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .tag {
+    font-family: var(--mono);
+    font-size: 10px;
+    padding: 4px 10px;
+    border: 1px solid var(--rule);
+    border-radius: 2px;
+    color: var(--ink-soft);
+    letter-spacing: 0.05em;
+  }
+
+  .tag.ship {
+    background: var(--gojo-bg);
+    border-color: var(--gojo-blue-light);
+    color: var(--gojo-blue-deep);
+  }
+
+  .chapter-heading {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--ink-faded);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .chapter-title {
+    font-family: var(--serif);
+    font-size: 28px;
+    font-weight: 500;
+    margin-bottom: 32px;
+    font-style: italic;
+  }
+
+  .chapter-body {
+    font-family: var(--serif);
+    font-size: 18px;
+    line-height: 1.75;
+    color: var(--ink-soft);
+  }
+
+  .chapter-body p {
+    margin-bottom: 1.2em;
+  }
+
+  .chapter-body .first-letter::first-letter {
+    font-size: 64px;
+    float: left;
+    line-height: 0.85;
+    padding: 6px 10px 0 0;
+    font-weight: 600;
+    color: var(--geto-purple-deep);
+  }
+
+  .fade-cut {
+    height: 80px;
+    background: linear-gradient(to bottom, transparent, white);
+    margin-top: -80px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .skip-marker {
+    text-align: center;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    color: var(--ink-faded);
+    text-transform: uppercase;
+    padding: 12px 0 32px;
+  }
+
+  /* END NOTES — the star of the show */
+  .end-notes {
+    margin-top: 48px;
+    padding: 40px;
+    background: linear-gradient(135deg, var(--gojo-bg) 0%, var(--geto-bg) 100%);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .end-notes::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--fusion);
+  }
+
+  .end-notes-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .end-notes-label::before, .end-notes-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: rgba(26, 22, 34, 0.15);
+  }
+
+  .credits {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px 24px;
+    margin-bottom: 32px;
+    font-size: 14px;
+  }
+
+  .credit-row {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .credit-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--ink-faded);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  .credit-value {
+    color: var(--ink);
+    font-weight: 500;
+  }
+
+  .last-choice {
+    background: rgba(255, 255, 255, 0.6);
+    padding: 16px 20px;
+    border-left: 3px solid var(--gojo-blue);
+    margin-bottom: 32px;
+    font-size: 14px;
+    border-radius: 0 4px 4px 0;
+  }
+
+  .last-choice strong {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--gojo-blue-deep);
+    display: block;
+    margin-bottom: 6px;
+  }
+
+  /* THE POLL */
+  .poll-block {
+    background: white;
+    border-radius: 6px;
+    padding: 32px;
+    box-shadow: 0 4px 20px -8px rgba(45, 90, 138, 0.15);
+  }
+
+  .poll-title {
+    font-family: var(--serif);
+    font-size: 28px;
+    font-weight: 500;
+    margin-bottom: 6px;
+    text-align: center;
+    letter-spacing: -0.01em;
+  }
+
+  .poll-title .icon { font-style: normal; }
+
+  .poll-prompt {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 16px;
+    color: var(--ink-soft);
+    text-align: center;
+    margin-bottom: 28px;
+  }
+
+  .options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .option {
+    border: 2px solid transparent;
+    background: var(--paper);
+    border-radius: 4px;
+    padding: 24px 22px;
+    cursor: pointer;
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+    text-align: left;
+    font-family: inherit;
+    color: inherit;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .option::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--option-bg);
+    opacity: 0.4;
+    transition: opacity 0.25s ease;
+    z-index: 0;
+  }
+
+  .option > * { position: relative; z-index: 1; }
+
+  .option[data-side="gojo"] {
+    --option-bg: var(--gojo-bg);
+    --option-accent: var(--gojo-blue);
+    --option-deep: var(--gojo-blue-deep);
+  }
+
+  .option[data-side="geto"] {
+    --option-bg: var(--geto-bg);
+    --option-accent: var(--geto-purple);
+    --option-deep: var(--geto-purple-deep);
+  }
+
+  .option:hover {
+    transform: translateY(-3px);
+    border-color: var(--option-accent);
+    box-shadow: 0 12px 30px -10px rgba(0,0,0,0.15);
+  }
+
+  .option:hover::before { opacity: 0.7; }
+
+  .option.selected {
+    border-color: var(--option-accent);
+    box-shadow: 0 0 0 3px var(--option-bg), 0 12px 30px -10px rgba(0,0,0,0.2);
+    transform: translateY(-3px);
+  }
+
+  .option.selected::before { opacity: 0.85; }
+
+  .option-letter {
+    font-family: var(--serif);
+    font-size: 56px;
+    font-weight: 500;
+    line-height: 1;
+    color: var(--option-deep);
+    font-style: italic;
+    margin-bottom: 8px;
+  }
+
+  .option-text {
+    font-family: var(--serif);
+    font-size: 17px;
+    line-height: 1.45;
+    color: var(--ink);
+    margin-bottom: 12px;
+  }
+
+  .option-axis {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--option-deep);
+    opacity: 0.75;
+  }
+
+  .vote-bar {
+    height: 4px;
+    background: rgba(255,255,255,0.5);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-top: 14px;
+    opacity: 0;
+    transition: opacity 0.3s ease 0.2s;
+  }
+
+  .vote-bar-fill {
+    height: 100%;
+    background: var(--option-accent);
+    width: 0%;
+    transition: width 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s;
+    border-radius: 2px;
+  }
+
+  .results-shown .vote-bar { opacity: 1; }
+
+  .vote-count {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--option-deep);
+    margin-top: 8px;
+    opacity: 0;
+    transition: opacity 0.3s ease 0.5s;
+  }
+
+  .results-shown .vote-count { opacity: 0.85; }
+
+  .poll-footer {
+    text-align: center;
+    font-size: 13px;
+    color: var(--ink-soft);
+    padding-top: 8px;
+    border-top: 1px solid var(--rule);
+    padding-top: 20px;
+    margin-top: 8px;
+  }
+
+  .poll-footer .deadline {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: var(--geto-purple-deep);
+    margin-top: 6px;
+  }
+
+  .feedback {
+    text-align: center;
+    padding: 20px;
+    background: rgba(255,255,255,0.7);
+    border-radius: 4px;
+    margin-top: 20px;
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 16px;
+    opacity: 0;
+    max-height: 0;
+    overflow: hidden;
+    transition: opacity 0.4s ease, max-height 0.4s ease, margin-top 0.4s ease, padding 0.4s ease;
+  }
+
+  .feedback.shown {
+    opacity: 1;
+    max-height: 100px;
+    padding: 20px;
+    margin-top: 20px;
+  }
+
+  /* DASHBOARD */
+  .dashboard {
+    margin-top: 100px;
+  }
+
+  .dash-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 24px;
+    margin-top: 32px;
+  }
+
+  .track-card {
+    background: white;
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    padding: 28px 24px;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.25s ease;
+  }
+
+  .track-card:hover { transform: translateY(-4px); }
+
+  .track-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+  }
+
+  .track-card[data-state="active"] { box-shadow: 0 12px 32px -12px rgba(45, 90, 138, 0.25); }
+  .track-card[data-state="active"]::before { background: var(--fusion); }
+  .track-card[data-state="upcoming"]::before { background: var(--gojo-blue-light); opacity: 0.5; }
+  .track-card[data-state="upcoming"] { opacity: 0.85; }
+
+  .track-status {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-faded);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .track-status .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--ink-faded);
+  }
+
+  .track-card[data-state="active"] .track-status { color: var(--gojo-blue-deep); }
+  .track-card[data-state="active"] .dot {
+    background: var(--gojo-blue);
+    box-shadow: 0 0 0 0 var(--gojo-blue);
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(74, 143, 212, 0.5); }
+    70% { box-shadow: 0 0 0 8px rgba(74, 143, 212, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(74, 143, 212, 0); }
+  }
+
+  .track-name {
+    font-family: var(--serif);
+    font-size: 32px;
+    font-weight: 500;
+    margin-bottom: 4px;
+    letter-spacing: -0.01em;
+  }
+
+  .track-name .accent { font-style: italic; color: var(--geto-purple-deep); }
+
+  .track-tagline {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 14px;
+    color: var(--ink-soft);
+    margin-bottom: 24px;
+  }
+
+  .track-stats {
+    display: flex;
+    justify-content: space-between;
+    padding: 16px 0;
+    border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+    margin-bottom: 16px;
+  }
+
+  .stat {
+    text-align: center;
+  }
+
+  .stat-value {
+    font-family: var(--serif);
+    font-size: 24px;
+    font-weight: 500;
+    color: var(--ink);
+    line-height: 1;
+  }
+
+  .stat-label {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--ink-faded);
+    margin-top: 6px;
+  }
+
+  .progress-track {
+    height: 6px;
+    background: var(--rule);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 8px;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--fusion);
+    border-radius: 3px;
+    transition: width 1.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .progress-meta {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--ink-faded);
+    letter-spacing: 0.1em;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  /* TIMELINE */
+  .timeline {
+    margin-top: 56px;
+    padding: 32px;
+    background: white;
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+  }
+
+  .timeline-title {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-faded);
+    margin-bottom: 24px;
+  }
+
+  .timeline-bar {
+    height: 36px;
+    display: flex;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 12px;
+    background: var(--rule);
+  }
+
+  .timeline-segment {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: white;
+    font-weight: 500;
+    position: relative;
+  }
+
+  .timeline-segment.kickoff { background: var(--ink); flex: 1; }
+  .timeline-segment.t1 { background: var(--gojo-blue); flex: 4; }
+  .timeline-segment.break1 { background: var(--ink-faded); flex: 0.4; }
+  .timeline-segment.t2 { background: var(--geto-purple); flex: 4; }
+  .timeline-segment.break2 { background: var(--ink-faded); flex: 0.4; }
+  .timeline-segment.t3 { background: linear-gradient(90deg, var(--gojo-blue) 0%, var(--geto-purple) 100%); flex: 4; }
+
+  .timeline-labels {
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--ink-faded);
+    letter-spacing: 0.1em;
+  }
+
+  /* FOOTER */
+  footer {
+    margin-top: 100px;
+    padding-top: 40px;
+    border-top: 1px solid var(--rule);
+    text-align: center;
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 16px;
+    color: var(--ink-soft);
+  }
+
+  footer .signature {
+    font-size: 14px;
+    color: var(--ink-faded);
+    margin-top: 12px;
+    font-style: normal;
+    font-family: var(--mono);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  /* Mobile */
+  @media (max-width: 720px) {
+    .container { padding: 32px 20px 60px; }
+    .ao3-content { padding: 32px 24px; }
+    .end-notes { padding: 28px 20px; }
+    .poll-block { padding: 24px 18px; }
+    .options { grid-template-columns: 1fr; }
+    .dash-grid { grid-template-columns: 1fr; }
+    .credits { grid-template-columns: 1fr 1fr; }
+    .work-title { font-size: 32px; }
+  }
+
+  /* Reveal animation */
+  .reveal {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: revealIn 0.8s ease forwards;
+  }
+
+  @keyframes revealIn {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .reveal-1 { animation-delay: 0.1s; }
+  .reveal-2 { animation-delay: 0.25s; }
+  .reveal-3 { animation-delay: 0.4s; }
+</style>
+</head>
+<body>
+
+<div class="grain"></div>
+
+<div class="container">
+
+  <!-- MASTHEAD -->
+  <header class="masthead reveal reveal-1">
+    <div class="eyebrow">A collaborative branching fanfic — prototype preview</div>
+    <h1 class="title">
+      <span class="six">Six</span> <span class="amp">&</span> <span class="eyes">Eyes</span>
+    </h1>
+    <p class="subtitle">Three timelines, two choices a chapter, infinite ways to fall.</p>
+  </header>
+
+  <!-- SECTION 1: AO3 PREVIEW -->
+  <div class="section-header reveal reveal-2">
+    <span class="section-num">01</span>
+    <h2 class="section-title">What readers will see on AO3</h2>
+    <span class="section-rule"></span>
+  </div>
+
+  <div class="ao3-frame reveal reveal-2">
+    <div class="ao3-tab">
+      <span>archiveofourown.org / works / 0000000 / chapters / 0000003</span>
+      <div class="dots"><span></span><span></span><span></span></div>
+    </div>
+
+    <div class="ao3-content">
+
+      <div class="work-meta">
+        <div class="work-fandom">Jujutsu Kaisen · Reader Choice · Multiple Endings</div>
+        <h3 class="work-title">The Light We Borrow</h3>
+        <p class="work-subtitle">A SatoSugu collab — Track 1: GoGe</p>
+        <div class="work-tags">
+          <span class="tag ship">Gojo Satoru / Geto Suguru</span>
+          <span class="tag">Mature</span>
+          <span class="tag">Slow Burn</span>
+          <span class="tag">Interactive Fic</span>
+          <span class="tag">3 Possible Endings</span>
+        </div>
+      </div>
+
+      <div class="chapter-heading">Chapter 3 of ?</div>
+      <h4 class="chapter-title">The space between two breaths</h4>
+
+      <div class="chapter-body">
+        <p class="first-letter">Suguru had learned, over the years, that silence between them was never empty. It carried weight — sometimes the weight of an unspoken question, sometimes the weight of an answer neither of them was ready to give. Tonight, on the rooftop of the dormitory, the silence had teeth.</p>
+
+        <p>Satoru sat at the edge, legs swinging into the dark, the city humming below them in patches of amber and white. His blindfold was gone. He hadn't said why.</p>
+
+        <p>"You've been quiet," Suguru said, finally, because someone had to.</p>
+
+        <p>"Have I?" Satoru didn't turn. "I thought I was being charming."</p>
+
+        <p>It was a deflection. They both knew it. Suguru took a step closer anyway, close enough that his shadow fell over Satoru's hands — those impossible hands that could undo the world and</p>
+      </div>
+
+      <div class="fade-cut"></div>
+      <div class="skip-marker">— skip ahead —</div>
+
+      <div class="end-notes">
+        <div class="end-notes-label">End notes</div>
+
+        <div class="credits">
+          <div class="credit-row">
+            <span class="credit-label">Director de Ideas</span>
+            <span class="credit-value">@username</span>
+          </div>
+          <div class="credit-row">
+            <span class="credit-label">Written by</span>
+            <span class="credit-value">@username</span>
+          </div>
+          <div class="credit-row">
+            <span class="credit-label">Beta'd by</span>
+            <span class="credit-value">@username</span>
+          </div>
+          <div class="credit-row">
+            <span class="credit-label">Art by</span>
+            <span class="credit-value">@username</span>
+          </div>
+          <div class="credit-row">
+            <span class="credit-label">Posted by</span>
+            <span class="credit-value">@username</span>
+          </div>
+          <div class="credit-row">
+            <span class="credit-label">Sprint</span>
+            <span class="credit-value">3 of ~6</span>
+          </div>
+        </div>
+
+        <div class="last-choice">
+          <strong>Last chapter's winning choice</strong>
+          Suguru followed him onto the rooftop. <em>(67% — leaned into trust)</em>
+        </div>
+
+        <div class="poll-block">
+          <h3 class="poll-title"><span class="icon">🗳️</span> Vote for the next chapter</h3>
+          <p class="poll-prompt">What does Suguru do in this moment?</p>
+
+          <div class="options" id="options">
+            <button class="option" data-side="gojo" data-letter="A" data-axis="trust ↑" data-feedback="A choice that pulls toward trust. The next chapter softens.">
+              <div class="option-letter">A</div>
+              <div class="option-text">He reaches for Satoru's hand and stays.</div>
+              <div class="option-axis">Nudge: trust ↑</div>
+              <div class="vote-bar"><div class="vote-bar-fill" data-pct="0"></div></div>
+              <div class="vote-count" data-count="0">0 votes</div>
+            </button>
+
+            <button class="option" data-side="geto" data-letter="B" data-axis="tension ↑" data-feedback="A choice that pulls toward tension. The next chapter sharpens.">
+              <div class="option-letter">B</div>
+              <div class="option-text">He turns away and lets the silence speak.</div>
+              <div class="option-axis">Nudge: tension ↑</div>
+              <div class="vote-bar"><div class="vote-bar-fill" data-pct="0"></div></div>
+              <div class="vote-count" data-count="0">0 votes</div>
+            </button>
+          </div>
+
+          <div class="feedback" id="feedback"></div>
+
+          <div class="poll-footer">
+            Comment <strong>"A"</strong> or <strong>"B"</strong> on AO3 to vote — or react below in our Discord backup poll.
+            <div class="deadline">Voting closes Friday, Nov 14 · 11:59 PM UTC</div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <!-- SECTION 2: PROJECT DASHBOARD -->
+  <div class="section-header reveal reveal-3" style="margin-top: 100px;">
+    <span class="section-num">02</span>
+    <h2 class="section-title">The project at a glance</h2>
+    <span class="section-rule"></span>
+  </div>
+
+  <div class="dashboard reveal reveal-3" style="margin-top: 0;">
+
+    <div class="dash-grid">
+
+      <div class="track-card" data-state="active">
+        <div class="track-status"><span class="dot"></span> In progress · sprint 3</div>
+        <h3 class="track-name">Track <span class="accent">I</span></h3>
+        <p class="track-tagline">GoGe — the light we borrow</p>
+        <div class="track-stats">
+          <div class="stat"><div class="stat-value">3</div><div class="stat-label">chapters</div></div>
+          <div class="stat"><div class="stat-value">2</div><div class="stat-label">choices/cap</div></div>
+          <div class="stat"><div class="stat-value">3</div><div class="stat-label">endings</div></div>
+        </div>
+        <div class="progress-track"><div class="progress-fill" style="width: 50%"></div></div>
+        <div class="progress-meta"><span>50% complete</span><span>16 weeks</span></div>
+      </div>
+
+      <div class="track-card" data-state="upcoming">
+        <div class="track-status"><span class="dot"></span> Up next</div>
+        <h3 class="track-name">Track <span class="accent">II</span></h3>
+        <p class="track-tagline">Mixed or GeGo — group decides</p>
+        <div class="track-stats">
+          <div class="stat"><div class="stat-value">—</div><div class="stat-label">chapters</div></div>
+          <div class="stat"><div class="stat-value">2</div><div class="stat-label">choices/cap</div></div>
+          <div class="stat"><div class="stat-value">3</div><div class="stat-label">endings</div></div>
+        </div>
+        <div class="progress-track"><div class="progress-fill" style="width: 0%"></div></div>
+        <div class="progress-meta"><span>Not started</span><span>~16 weeks</span></div>
+      </div>
+
+      <div class="track-card" data-state="upcoming">
+        <div class="track-status"><span class="dot"></span> Closing arc</div>
+        <h3 class="track-name">Track <span class="accent">III</span></h3>
+        <p class="track-tagline">The remaining one — finale</p>
+        <div class="track-stats">
+          <div class="stat"><div class="stat-value">—</div><div class="stat-label">chapters</div></div>
+          <div class="stat"><div class="stat-value">2</div><div class="stat-label">choices/cap</div></div>
+          <div class="stat"><div class="stat-value">3</div><div class="stat-label">endings</div></div>
+        </div>
+        <div class="progress-track"><div class="progress-fill" style="width: 0%"></div></div>
+        <div class="progress-meta"><span>Not started</span><span>~16 weeks</span></div>
+      </div>
+
+    </div>
+
+    <div class="timeline">
+      <div class="timeline-title">Project timeline · ~12 months total</div>
+      <div class="timeline-bar">
+        <div class="timeline-segment kickoff">Kickoff</div>
+        <div class="timeline-segment t1">Track I — GoGe</div>
+        <div class="timeline-segment break1"></div>
+        <div class="timeline-segment t2">Track II</div>
+        <div class="timeline-segment break2"></div>
+        <div class="timeline-segment t3">Track III</div>
+      </div>
+      <div class="timeline-labels">
+        <span>Month 0</span>
+        <span>Month 4</span>
+        <span>Month 8</span>
+        <span>Month 12</span>
+      </div>
+    </div>
+
+  </div>
+
+  <footer>
+    Three stories. One love. Your choice shapes them all.
+    <div class="signature">— Pau · Directora General</div>
+  </footer>
+
+</div>
+
+<script>
+  // Mock vote data
+  const mockVotes = { A: 47, B: 34 };
+  const total = mockVotes.A + mockVotes.B;
+  const pctA = Math.round((mockVotes.A / total) * 100);
+  const pctB = 100 - pctA;
+
+  const options = document.querySelectorAll('.option');
+  const feedback = document.getElementById('feedback');
+  let voted = false;
+
+  options.forEach(opt => {
+    opt.addEventListener('click', () => {
+      if (voted) return;
+      voted = true;
+
+      // Mark selection
+      options.forEach(o => o.classList.remove('selected'));
+      opt.classList.add('selected');
+
+      // Show results
+      const pollBlock = opt.closest('.poll-block') || document.querySelector('.poll-block');
+      pollBlock.classList.add('results-shown');
+
+      // Animate bars
+      const optA = document.querySelector('.option[data-letter="A"]');
+      const optB = document.querySelector('.option[data-letter="B"]');
+      const fillA = optA.querySelector('.vote-bar-fill');
+      const fillB = optB.querySelector('.vote-bar-fill');
+      const countA = optA.querySelector('.vote-count');
+      const countB = optB.querySelector('.vote-count');
+
+      // Add the user's vote
+      const userLetter = opt.dataset.letter;
+      const localVotes = { ...mockVotes };
+      localVotes[userLetter] += 1;
+      const localTotal = localVotes.A + localVotes.B;
+      const localPctA = Math.round((localVotes.A / localTotal) * 100);
+      const localPctB = 100 - localPctA;
+
+      setTimeout(() => {
+        fillA.style.width = localPctA + '%';
+        fillB.style.width = localPctB + '%';
+        countA.textContent = `${localVotes.A} votes · ${localPctA}%`;
+        countB.textContent = `${localVotes.B} votes · ${localPctB}%`;
+      }, 50);
+
+      // Show feedback
+      feedback.textContent = '✦  ' + opt.dataset.feedback + '  ✦';
+      feedback.classList.add('shown');
+    });
+  });
+
+  // Animate progress bars on load
+  setTimeout(() => {
+    document.querySelectorAll('.progress-fill').forEach(el => {
+      const target = el.style.width;
+      el.style.width = '0%';
+      setTimeout(() => { el.style.width = target; }, 100);
+    });
+  }, 600);
+</script>
+
+</body>
+</html>
